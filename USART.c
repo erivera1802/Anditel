@@ -71,7 +71,7 @@ char BusyUSART(void)
     return 1;          // No, return FALSE
   return 0;            // Return TRUE
 }
-void putsUSART( char *data)
+void putsUSART(const char *data)
 {
   do
   {  // Transmit a byte
@@ -80,8 +80,20 @@ void putsUSART( char *data)
   } while( *data++ );
 }
 
+void putsUSARTNNull( char *data)
+{
+  while( *data )
+  {// Transmit a byte
+    while(BusyUSART());
+    WriteUSART(*data);
+    while(BusyUSART());
+    data++;
+  }
+}
+
 void cleanUSART (void)
-{	char data;
+{	
+    char data;
     RCSTAbits.CREN = 0;    // reset UART continuous receive to avoid overrun state
 	RCSTAbits.CREN = 1;	
 	data = ReadUSART(); //read data
@@ -95,6 +107,70 @@ void cleanUSART (void)
 	data = ReadUSART(); //read data
 	data=0;
 }
+
+int WaitForChar(char k,unsigned long int cycles,int tmr)
+{
+    int out=0;
+    int gotit;
+    char c;
+    switch (tmr)
+    {
+        case 0:
+            #define tmr TMR0IF
+        break;
+            
+        case 1:
+           #define tmr TMR1IF
+        break;
+        
+        case 2:
+           #define tmr TMR2IF
+        break;
+        
+        
+    }
+    ReadInicial:
+        if(RCIF)
+        {
+            out=0;
+            c=ReadUSART();
+            if(c==k)
+            {
+                out=0;
+                gotit=1;
+            }
+            else
+            {
+                goto ReadInicial;
+            }
+            
+        }
+        else
+        {
+            if(tmr==1)
+            {
+                tmr=0;
+                if(out==cycles)
+                {
+                    out=0;
+                    gotit=0;
+                }
+                else
+                {
+                    out=out+1;
+                    goto ReadInicial;
+                }
+            }
+            else
+            {
+                goto ReadInicial;
+            }
+        }
+    return gotit;
+}
+
+
+
 
 
 

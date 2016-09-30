@@ -25,16 +25,18 @@
  * Comments:
  * Revision history: 
  */
-
+#include <xc.h> // include processor files - each processor file is guarded.  
+#include "USART.h" 
+int InitTCPIP(int tmr,int cyclest,const char *webo);
+int OpenTCPIP(const char *IP,const char *port);
+//int OpenTCPIP();
+int SendTCPIP(char *data);
+int CloseTCPIP();
 // This is a guard condition so that contents of this file are not included
 // more than once.  
 #ifndef XC_HEADER_TEMPLATE_H
 #define	XC_HEADER_TEMPLATE_H
 
-#define DataRdyUSART RCIF
-
-
-#include <xc.h> // include processor files - each processor file is guarded.  
 
 // TODO Insert appropriate #include <>
 
@@ -43,14 +45,6 @@
 // TODO Insert declarations
 
 // Comment a function and leverage automatic documentation with slash star star
-void OpenUSART(unsigned char config,unsigned int spbrg);
-void WriteUSART(char data);
-char ReadUSART(void);
-char BusyUSART(void);
-void putsUSART(const char *data);
-void putsUSARTNNull( char *data);
-void cleanUSART (void);
-int WaitForChar(char k,unsigned long int cycles,int tmr);
 /**
     <p><b>Function prototype:</b></p>
   
