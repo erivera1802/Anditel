@@ -110,7 +110,7 @@ void main(void)
                 cleanUSART();       //Avoiding overrun error
                 putsUSART("AT+CSQ\r\n");//Signal request
                 while(BusyUSART());
-                /*ReadInicial:
+                ReadInicial:
                 if( DataRdyUSART)       //Wait for response 
                 {   
                     rt:
@@ -217,9 +217,9 @@ void main(void)
                 {   
                     goto ReadInicial;
                 }
-              */  
+                
             }
-            /*sen:            // LED routines
+            sen:            // LED routines
             if(signal==1)   //Signal low
             {
                     TMR2IF=0;
@@ -287,7 +287,7 @@ void main(void)
                         signal=signala;//Reload signal variable
                     }
                 
-            }*/
+            }
             task=task+1;    //Count task
             if(task==8)     //8 is the number of timer cycles it waits for checking signal strength
             {
