@@ -1,8 +1,6 @@
 #include <xc.h>
 #include "USART.h"
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 int InitTCPIP(int cyclest,int tmr,const char *webo)
 {
     int got=0;
@@ -70,18 +68,20 @@ int InitTCPIP(int cyclest,int tmr,const char *webo)
     }
     
     cleanUSART();
+     char apn[];
     const char *qicsgp="at+qicsgp=1,\"";
     //char *webo="internet.movistar.com.co";
-    const char *ende="\" \r\n";
+    const char *ende="\"\r\n";
     //sprintf(apn, "%s%s%s",qicsgp, webo, ende);
+    //putsUSART(apn);
+    //putsUSART("at+qicsgp=1,\"internet.movistar.com.co\"\r\n");
     putsUSARTNNull(qicsgp);
     while(BusyUSART());
     putsUSARTNNull(webo);
     while(BusyUSART());
     putsUSARTNNull(ende);
     while(BusyUSART());
-    //putsUSART("at+qicsgp=1,\"internet.movistar.com.co\"\r\n");
-    //while(BusyUSART());
+    while(BusyUSART());
     got=WaitForChar('K',5,2);
     if(got==1)
     {
@@ -175,10 +175,20 @@ int OpenTCPIP(const char *IP,const char *port)
     const char *qiopen="at+qiopen=\"tcp\",\"";
     const char *comma="\",";
     const char *ende="\"\r\n";
-    sprintf(vollip, "%s%s%s%s%s",qiopen, IP, comma, port, ende);
+    /*sprintf(vollip, "%s%s%s%s%s",qiopen, IP, comma, port, ende);
     cleanUSART(); 
-    putsUSART(vollip);
+    putsUSART(vollip);*/
     //putsUSART("at+qiopen=\"tcp\",\"181.58.30.155\",23\r\n");
+    cleanUSART();
+    putsUSARTNNull(qiopen);
+    while(BusyUSART());
+    putsUSARTNNull(IP);
+    while(BusyUSART());
+    putsUSARTNNull(comma);
+    while(BusyUSART());
+    putsUSARTNNull(port);
+    while(BusyUSART());
+    putsUSART(ende);
     while(BusyUSART());
     got=WaitForChar('K',20,2);
     got=WaitForChar('C',200,2);
@@ -194,7 +204,7 @@ int OpenTCPIP(const char *IP,const char *port)
     return doneop;        
 }
 
-int SendTCPIP(char* data)
+int SendTCPIP(char* word)
 {
     int got;
     int donese;
@@ -204,13 +214,14 @@ int SendTCPIP(char* data)
     putsUSART("at+qisend\r\n");
     while(BusyUSART());
     got=WaitForChar(' ',10,2);
+
+    __delay_ms(100);
+    __delay_ms(100);
+    __delay_ms(100);
+    __delay_ms(100);
+    __delay_ms(100);
     cleanUSART();
-    __delay_ms(100);
-    __delay_ms(100);
-    __delay_ms(100);
-    __delay_ms(100);
-    __delay_ms(100);
-    putsUSART(data);
+    putsUSART(word);
     while(BusyUSART())
     cleanUSART();    
     WriteUSART(0x1A);
@@ -226,6 +237,41 @@ int SendTCPIP(char* data)
     }    
     return donese;
 }
+
+int SendcTCPIP(char character)
+{
+    int got;
+    int donese;
+    __delay_ms(100);
+    __delay_ms(100);
+    cleanUSART(); 
+    putsUSART("at+qisend\r\n");
+    while(BusyUSART());
+    got=WaitForChar(' ',10,2);
+
+    __delay_ms(100);
+    __delay_ms(100);
+    __delay_ms(100);
+    __delay_ms(100);
+    __delay_ms(100);
+    cleanUSART();
+    WriteUSART(character);
+    while(BusyUSART())
+    cleanUSART();    
+    WriteUSART(0x1A);
+    while(BusyUSART())
+    got=WaitForChar('K',50,2);
+    if(got==1)
+    {
+        donese=1;
+    }
+    else
+    {
+        donese=0;
+    }    
+    return donese;
+}
+
 int CloseTCPIP()
 {
     int got;
@@ -261,4 +307,8 @@ int CloseTCPIP()
     }
     endclo:
     return doneclo;
+}
+void test(char *g)
+{
+    putsUSART(g);
 }

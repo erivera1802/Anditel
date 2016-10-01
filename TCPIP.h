@@ -27,11 +27,14 @@
  */
 #include <xc.h> // include processor files - each processor file is guarded.  
 #include "USART.h" 
+
 int InitTCPIP(int tmr,int cyclest,const char *webo);
 int OpenTCPIP(const char *IP,const char *port);
 //int OpenTCPIP();
-int SendTCPIP(char *data);
+int SendTCPIP(char *word);
+int SendcTCPIP(char character);
 int CloseTCPIP();
+void test(char *g);
 // This is a guard condition so that contents of this file are not included
 // more than once.  
 #ifndef XC_HEADER_TEMPLATE_H
