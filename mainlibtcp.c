@@ -15,7 +15,9 @@
 #pragma config CLKOUTEN = ON        // Clock Out Enable (CLKOUT function is enabled on the CLKOUT pin)
 #include "USART.h"
 #include "TCPIP.h"
+#include "EEPROM.h"
 int ot;
+int i;
 void interrupt isr() 
 { //reset the interrupt flag 
     if (INTCONbits.INTF) 
@@ -29,12 +31,17 @@ void interrupt isr()
         __delay_ms(100);
         RA2=1;
         char *xg="HALLO";
+        char num;
         if(ot==1)
         {
             ot=OpenTCPIP("181.58.30.155","23");
             if(ot==1)
             {
-                ot=SendTCPIP(xg);
+                for(i=1;i<11;i++)
+                {
+                    num=ReadEEPROM(i);
+                    SendcTCPIP(num);
+                }
             }
             
             ot=CloseTCPIP();
@@ -98,7 +105,7 @@ void main(void)
     int signal=1;                   //Variable for signal change after the LED cycle
     int signala=1;
     ot=InitTCPIP(10,2,"internet.movistar.com.co");
-    
+    WritesEEPROM("3142430050",1);
     
     while(1)
     {
